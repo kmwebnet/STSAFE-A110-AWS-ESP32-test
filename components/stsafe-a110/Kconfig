@@ -1,0 +1,47 @@
+menu "stsafe-secure-element"
+
+    choice STSAFE_TYPE
+        prompt "Choose the type of STSAFE chip"
+        default STSAFE_A110
+        help
+            There are two types of STSAFE ( Secure Element) chips.
+        config STSAFE_A110
+            bool "STSAFE-A110"
+        config STSAFE_A100
+            bool "STSAFE-A100"
+    endchoice
+
+    config ST_MBEDTLS_ECDSA
+        bool "Enable Hardware ECDSA keys for mbedTLS"
+        depends on MBEDTLS_ECDSA_C
+        help
+            Enable Hardware ECDSA
+
+    config ST_MBEDTLS_ECDSA_SIGN
+        bool "Enable STSAFE sign operations in mbedTLS"
+        depends on ST_MBEDTLS_ECDSA
+        select MBEDTLS_ATCA_HW_ECDSA_SIGN
+        select MBEDTLS_ECP_DP_SECP256R1_ENABLED
+
+
+    config ST_I2C_SDA_PIN
+        int "I2C SDA pin used to communicate with the STSAFE"
+        default 21
+
+    config ST_I2C_SCL_PIN
+        int "I2C SCL pin used to communicate with the STSAFE"
+        default 22
+
+    config ST_I2C_RST_PIN
+        int "GPIO RST pin used to communicate with the STSAFE"
+        default 23
+
+    config ST_I2C_ADDRESS
+        hex "I2C device address of the STAFE"
+        default 0x0020 if STSAFE_A110
+        default 0x0020 if STSAFE_A100
+
+    config ESP_TLS_USE_SE
+        bool "ESP32 uses Secure Element"
+
+endmenu # stsafe-secure-element
